@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhatsApp Disqus</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>WhatsApp Disqus - Mobile Ready</title>
     <!-- Font Awesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts para tipografía -->
@@ -20,14 +20,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             background-color: #111b21;
+            padding: 8px;
         }
 
         .whatsapp-container {
             display: flex;
             width: 1400px;
-            max-width: 95%;
+            max-width: 100%;
             height: 95vh;
             background-color: #2a2f32;
             border-radius: 10px;
@@ -196,21 +197,30 @@
         }
 
         .header-icons i {
-            margin-left: 25px;
+            margin-left: 20px;
             font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* Botón de refresh específico */
+        .refresh-comments {
+            background: none;
+            border: none;
+            color: #d1d7db;
+            font-size: 18px;
+            margin-left: 15px;
             cursor: pointer;
         }
 
         .messages-area {
             flex: 1;
             background-color: #0b141a;
-            padding: 20px 30px;
+            padding: 15px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
         }
 
-        /* Contenedor de Disqus con fondo blanco */
         #disqus_thread {
             background-color: white;
             border-radius: 8px;
@@ -219,6 +229,7 @@
             width: 100%;
             height: 100%;
             overflow-y: auto;
+            min-height: 300px; /* Asegura altura en móviles */
         }
 
         .chat-footer {
@@ -256,6 +267,83 @@
         ::-webkit-scrollbar-thumb {
             background-color: #2f3b43;
             border-radius: 10px;
+        }
+
+        /* ========== MEDIA QUERIES PARA MÓVILES ========== */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+            .whatsapp-container {
+                flex-direction: column;
+                height: 100vh;
+                border-radius: 0;
+                max-width: 100%;
+            }
+            .sidebar, .chat-panel {
+                width: 100%;
+            }
+            .sidebar {
+                height: 40%; /* Ajustable, puedes cambiarlo */
+                border-right: none;
+                border-bottom: 1px solid #2f3b43;
+            }
+            .chat-panel {
+                height: 60%;
+            }
+            .sidebar-header, .chat-header {
+                padding: 8px 12px;
+            }
+            .header-icons i {
+                margin-left: 15px;
+                font-size: 16px;
+            }
+            .contact-avatar {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+            .contact-details h4 {
+                font-size: 14px;
+            }
+            .contact-details p {
+                font-size: 11px;
+            }
+            .chat-footer i {
+                font-size: 20px;
+                margin-right: 10px;
+            }
+            .chat-footer .message-input {
+                padding: 6px 10px;
+                font-size: 14px;
+            }
+            .messages-area {
+                padding: 10px;
+            }
+            #disqus_thread {
+                padding: 10px;
+            }
+        }
+
+        /* Ajuste para pantallas muy pequeñas */
+        @media screen and (max-width: 480px) {
+            .sidebar {
+                height: 35%;
+            }
+            .chat-panel {
+                height: 65%;
+            }
+            .chat-avatar {
+                width: 40px;
+                height: 40px;
+                font-size: 14px;
+            }
+            .chat-name {
+                font-size: 14px;
+            }
+            .chat-message {
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -315,27 +403,17 @@
                 <div class="header-icons">
                     <i class="fas fa-search"></i>
                     <i class="fas fa-paperclip"></i>
+                    <!-- Botón de refresh manual para Disqus -->
+                    <button class="refresh-comments" id="refreshDisqusBtn" title="Actualizar comentarios">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
                     <i class="fas fa-ellipsis-vertical"></i>
                 </div>
             </div>
 
-            <!-- Área de mensajes: TU CÓDIGO DISQUS AQUÍ -->
+            <!-- Área de mensajes: Disqus -->
             <div class="messages-area">
                 <div id="disqus_thread"></div>
-                <script>
-                    // TU CONFIGURACIÓN DISQUS (ya con tu shortname)
-                    var disqus_config = function () {
-                        this.page.url = window.location.href;  // Usa la URL actual
-                        this.page.identifier = 'whatsapp-chat-juan'; // Identificador único para este hilo
-                    };
-                    
-                    (function() {
-                        var d = document, s = d.createElement('script');
-                        s.src = 'https://penatotal-1.disqus.com/embed.js';
-                        s.setAttribute('data-timestamp', +new Date());
-                        (d.head || d.body).appendChild(s);
-                    })();
-                </script>
                 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
             </div>
 
@@ -348,5 +426,66 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Configuración centralizada para Disqus
+        var disqusConfig = {
+            url: window.location.href,
+            identifier: 'whatsapp-chat-juan'
+        };
+
+        // Variable para controlar el intervalo
+        var disqusAutoRefreshInterval;
+
+        // Función para refrescar Disqus manual o automáticamente
+        function refreshDisqus() {
+            if (typeof DISQUS !== 'undefined') {
+                DISQUS.reset({
+                    reload: true,
+                    config: function () {
+                        this.page.url = disqusConfig.url;
+                        this.page.identifier = disqusConfig.identifier;
+                    }
+                });
+                console.log('Disqus refrescado');
+            } else {
+                console.warn('Disqus aún no está cargado');
+            }
+        }
+
+        // Configuración de Disqus (se ejecuta antes de cargar el script)
+        var disqus_config = function () {
+            this.page.url = disqusConfig.url;
+            this.page.identifier = disqusConfig.identifier;
+        };
+
+        // Cargar script de Disqus
+        (function() {
+            var d = document, s = d.createElement('script');
+            s.src = 'https://penatotal-1.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+
+        // Una vez cargada la página, activamos el botón y el auto-refresh
+        window.addEventListener('load', function() {
+            // Botón manual
+            document.getElementById('refreshDisqusBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                refreshDisqus();
+            });
+
+            // Auto-refresh cada 30 segundos (30000 ms)
+            // Puedes cambiar el intervalo o desactivarlo si lo deseas
+            disqusAutoRefreshInterval = setInterval(refreshDisqus, 30000);
+        });
+
+        // Opcional: limpiar el intervalo si se descarga la página (buena práctica)
+        window.addEventListener('beforeunload', function() {
+            if (disqusAutoRefreshInterval) {
+                clearInterval(disqusAutoRefreshInterval);
+            }
+        });
+    </script>
 </body>
 </html>
