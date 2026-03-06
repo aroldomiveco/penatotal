@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>WhatsApp Disqus - Mobile Ready</title>
+    <title>WhatsApp Web + Cusdis</title>
     <!-- Font Awesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts para tipografía -->
@@ -20,15 +20,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            height: 100vh;
             background-color: #111b21;
-            padding: 8px;
         }
 
         .whatsapp-container {
             display: flex;
             width: 1400px;
-            max-width: 100%;
+            max-width: 95%;
             height: 95vh;
             background-color: #2a2f32;
             border-radius: 10px;
@@ -197,40 +196,94 @@
         }
 
         .header-icons i {
-            margin-left: 20px;
+            margin-left: 25px;
             font-size: 18px;
-            cursor: pointer;
-        }
-
-        /* Botón de refresh específico */
-        .refresh-comments {
-            background: none;
-            border: none;
-            color: #d1d7db;
-            font-size: 18px;
-            margin-left: 15px;
             cursor: pointer;
         }
 
         .messages-area {
             flex: 1;
             background-color: #0b141a;
-            padding: 15px;
+            padding: 20px 30px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
         }
 
-        #disqus_thread {
-            background-color: white;
+        /* ===== ESTILOS PARA CUSDIS (fondo negro, texto claro) ===== */
+        #cusdis_thread {
+            background-color: #0b141a !important;
             border-radius: 8px;
             padding: 15px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             width: 100%;
             height: 100%;
             overflow-y: auto;
-            min-height: 300px; /* Asegura altura en móviles */
+            color: #e0e0e0;
         }
+
+        /* Personalización de los elementos internos de Cusdis */
+        .cusdis-comment {
+            background-color: #1e2a2f !important;
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 10px !important;
+            margin-bottom: 10px !important;
+            color: #e0e0e0 !important;
+        }
+
+        .cusdis-comment .cusdis-comment-author {
+            color: #00a884 !important;
+            font-weight: bold !important;
+        }
+
+        .cusdis-comment .cusdis-comment-date {
+            color: #8796a1 !important;
+            font-size: 12px !important;
+        }
+
+        .cusdis-comment .cusdis-comment-content {
+            color: #e0e0e0 !important;
+        }
+
+        /* Caja de texto para nuevo comentario */
+        .cusdis-comment-form {
+            background-color: #1e2a2f !important;
+            border: 1px solid #2f3b43 !important;
+            border-radius: 8px !important;
+            padding: 10px !important;
+            color: #e0e0e0 !important;
+        }
+
+        .cusdis-comment-form textarea {
+            background-color: #2a3942 !important;
+            border: none !important;
+            color: #e0e0e0 !important;
+            border-radius: 8px !important;
+            padding: 8px !important;
+            width: 100%;
+        }
+
+        .cusdis-comment-form button {
+            background-color: #00a884 !important;
+            border: none !important;
+            color: white !important;
+            border-radius: 20px !important;
+            padding: 8px 16px !important;
+            font-weight: bold !important;
+            cursor: pointer !important;
+            margin-top: 8px;
+        }
+
+        .cusdis-comment-form button:hover {
+            background-color: #008f6f !important;
+        }
+
+        /* Enlaces */
+        .cusdis a {
+            color: #00a884 !important;
+        }
+        /* ===== FIN ESTILOS CUSDIS ===== */
 
         .chat-footer {
             background-color: #202c33;
@@ -273,83 +326,120 @@
         @media screen and (max-width: 768px) {
             body {
                 padding: 0;
+                height: 100vh;
+                align-items: stretch;
             }
+
             .whatsapp-container {
                 flex-direction: column;
+                max-width: 100%;
+                width: 100%;
                 height: 100vh;
                 border-radius: 0;
-                max-width: 100%;
             }
-            .sidebar, .chat-panel {
-                width: 100%;
-            }
+
             .sidebar {
-                height: 40%; /* Ajustable, puedes cambiarlo */
+                width: 100%;
+                height: 35%; /* Ajusta según prefieras */
                 border-right: none;
                 border-bottom: 1px solid #2f3b43;
             }
+
             .chat-panel {
-                height: 60%;
+                width: 100%;
+                height: 65%;
             }
-            .sidebar-header, .chat-header {
+
+            .sidebar-header,
+            .chat-header {
                 padding: 8px 12px;
             }
+
             .header-icons i {
                 margin-left: 15px;
                 font-size: 16px;
             }
+
+            .avatar,
             .contact-avatar {
                 width: 35px;
                 height: 35px;
-                font-size: 14px;
+                font-size: 16px;
             }
+
             .contact-details h4 {
                 font-size: 14px;
             }
+
             .contact-details p {
                 font-size: 11px;
             }
+
+            .messages-area {
+                padding: 10px;
+            }
+
+            #cusdis_thread {
+                padding: 10px;
+            }
+
             .chat-footer i {
                 font-size: 20px;
                 margin-right: 10px;
             }
+
             .chat-footer .message-input {
                 padding: 6px 10px;
                 font-size: 14px;
             }
-            .messages-area {
-                padding: 10px;
+
+            .chat-item {
+                padding: 8px 12px;
             }
-            #disqus_thread {
-                padding: 10px;
+
+            .chat-avatar {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+                margin-right: 8px;
+            }
+
+            .chat-name {
+                font-size: 14px;
+            }
+
+            .chat-message {
+                font-size: 12px;
+            }
+
+            .chat-time {
+                font-size: 10px;
             }
         }
 
         /* Ajuste para pantallas muy pequeñas */
         @media screen and (max-width: 480px) {
             .sidebar {
-                height: 35%;
+                height: 30%;
             }
             .chat-panel {
-                height: 65%;
+                height: 70%;
             }
-            .chat-avatar {
-                width: 40px;
-                height: 40px;
-                font-size: 14px;
+
+            .sidebar-header i,
+            .header-icons i {
+                margin-left: 10px;
             }
-            .chat-name {
-                font-size: 14px;
-            }
-            .chat-message {
-                font-size: 12px;
+
+            .contact-avatar {
+                margin-right: 8px;
             }
         }
     </style>
 </head>
 <body>
     <div class="whatsapp-container">
-        <!-- Panel izquierdo -->
+        <!-- Panel izquierdo (lista de chats) -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <div class="avatar">Yo</div>
@@ -367,7 +457,7 @@
                     <div class="chat-avatar">JD</div>
                     <div class="chat-info">
                         <div class="chat-name">Juan Díaz</div>
-                        <div class="chat-message">¿Unas Marácas?</div>
+                        <div class="chat-message">¿Qué opinas del nuevo diseño?</div>
                     </div>
                     <div class="chat-time">ayer</div>
                 </div>
@@ -375,22 +465,22 @@
                     <div class="chat-avatar">ML</div>
                     <div class="chat-info">
                         <div class="chat-name">María López</div>
-                        <div class="chat-message">Sale Pete?</div>
+                        <div class="chat-message">Te compartí el documento</div>
                     </div>
                     <div class="chat-time">12:45</div>
                 </div>
                 <div class="chat-item">
                     <div class="chat-avatar">CG</div>
                     <div class="chat-info">
-                        <div class="chat-name">ComeTravas</div>
-                        <div class="chat-message">Nos vemos mañana?</div>
+                        <div class="chat-name">Carlos Gómez</div>
+                        <div class="chat-message">Nos vemos mañana</div>
                     </div>
                     <div class="chat-time">lun</div>
                 </div>
             </div>
         </div>
 
-        <!-- Panel derecho con Disqus -->
+        <!-- Panel derecho con Cusdis -->
         <div class="chat-panel">
             <div class="chat-header">
                 <div class="contact-info">
@@ -403,21 +493,23 @@
                 <div class="header-icons">
                     <i class="fas fa-search"></i>
                     <i class="fas fa-paperclip"></i>
-                    <!-- Botón de refresh manual para Disqus -->
-                    <button class="refresh-comments" id="refreshDisqusBtn" title="Actualizar comentarios">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
                     <i class="fas fa-ellipsis-vertical"></i>
                 </div>
             </div>
 
-            <!-- Área de mensajes: Disqus -->
+            <!-- Área de mensajes: CUSDIS con tu app-id -->
             <div class="messages-area">
-                <div id="disqus_thread"></div>
-                <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                <div id="cusdis_thread"
+                    data-host="https://cusdis.com"
+                    data-app-id="e721812d-69c4-4d34-9210-08ed34388cbf"
+                    data-page-id="whatsapp-chat-juan"
+                    data-page-url="https://whatsapp-disqus.vercel.app"  <!-- CAMBIA ESTO POR TU URL REAL -->
+                    data-page-title="Chat con Juan Díaz">
+                </div>
+                <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
             </div>
 
-            <!-- Pie simulado (decorativo) -->
+            <!-- Pie simulado (solo decoración) -->
             <div class="chat-footer">
                 <i class="fa-regular fa-face-smile"></i>
                 <i class="fa-solid fa-paperclip"></i>
@@ -426,66 +518,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-        // Configuración centralizada para Disqus
-        var disqusConfig = {
-            url: window.location.href,
-            identifier: 'whatsapp-chat-juan'
-        };
-
-        // Variable para controlar el intervalo
-        var disqusAutoRefreshInterval;
-
-        // Función para refrescar Disqus manual o automáticamente
-        function refreshDisqus() {
-            if (typeof DISQUS !== 'undefined') {
-                DISQUS.reset({
-                    reload: true,
-                    config: function () {
-                        this.page.url = disqusConfig.url;
-                        this.page.identifier = disqusConfig.identifier;
-                    }
-                });
-                console.log('Disqus refrescado');
-            } else {
-                console.warn('Disqus aún no está cargado');
-            }
-        }
-
-        // Configuración de Disqus (se ejecuta antes de cargar el script)
-        var disqus_config = function () {
-            this.page.url = disqusConfig.url;
-            this.page.identifier = disqusConfig.identifier;
-        };
-
-        // Cargar script de Disqus
-        (function() {
-            var d = document, s = d.createElement('script');
-            s.src = 'https://penatotal-1.disqus.com/embed.js';
-            s.setAttribute('data-timestamp', +new Date());
-            (d.head || d.body).appendChild(s);
-        })();
-
-        // Una vez cargada la página, activamos el botón y el auto-refresh
-        window.addEventListener('load', function() {
-            // Botón manual
-            document.getElementById('refreshDisqusBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                refreshDisqus();
-            });
-
-            // Auto-refresh cada 30 segundos (30000 ms)
-            // Puedes cambiar el intervalo o desactivarlo si lo deseas
-            disqusAutoRefreshInterval = setInterval(refreshDisqus, 30000);
-        });
-
-        // Opcional: limpiar el intervalo si se descarga la página (buena práctica)
-        window.addEventListener('beforeunload', function() {
-            if (disqusAutoRefreshInterval) {
-                clearInterval(disqusAutoRefreshInterval);
-            }
-        });
-    </script>
 </body>
 </html>
