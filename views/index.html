@@ -3,27 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PenaTotal 3.0</title>
+    <title>PenaTotal 3.0 - Lacréate , Humillate y Diviertete</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Cloudinary Widget -->
-    <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -33,14 +29,11 @@
             overflow: hidden;
             backdrop-filter: blur(10px);
         }
-
-        /* Header con subida */
         .upload-header {
             background: white;
             padding: 30px;
             border-bottom: 1px solid #eef2f6;
         }
-
         .upload-header h1 {
             font-size: 2.5rem;
             font-weight: 700;
@@ -50,7 +43,6 @@
             margin-bottom: 20px;
             text-align: center;
         }
-
         .upload-area {
             border: 3px dashed #cbd5e0;
             border-radius: 16px;
@@ -60,35 +52,32 @@
             transition: all 0.3s ease;
             background: #f8fafc;
         }
-
         .upload-area:hover {
             border-color: #667eea;
             background: #f0f4ff;
         }
-
         .upload-area i {
             font-size: 48px;
             color: #667eea;
             margin-bottom: 15px;
         }
-
         .upload-area p {
             font-size: 1.1rem;
             color: #4a5568;
             margin-bottom: 10px;
         }
-
         .upload-area small {
             color: #718096;
             font-size: 0.9rem;
         }
-
-        /* Carrusel */
+        .upload-area.dragover {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
         .carousel-container {
             padding: 30px;
             background: #f7fafc;
         }
-
         .carousel {
             position: relative;
             max-width: 800px;
@@ -97,14 +86,12 @@
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-
         .carousel-inner {
             position: relative;
             width: 100%;
             height: 400px;
             background: #1a202c;
         }
-
         .carousel-item {
             position: absolute;
             top: 0;
@@ -118,17 +105,14 @@
             justify-content: center;
             background: #1a202c;
         }
-
         .carousel-item.active {
             opacity: 1;
         }
-
         .carousel-item img {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
         }
-
         .carousel-control {
             position: absolute;
             top: 50%;
@@ -148,28 +132,23 @@
             z-index: 10;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-
         .carousel-control:hover {
             background: white;
             color: #667eea;
             transform: translateY(-50%) scale(1.1);
         }
-
         .carousel-control.prev {
             left: 20px;
         }
-
         .carousel-control.next {
             right: 20px;
         }
-
         .carousel-indicators {
             display: flex;
             justify-content: center;
             gap: 12px;
             margin-top: 15px;
         }
-
         .indicator {
             width: 12px;
             height: 12px;
@@ -179,31 +158,25 @@
             transition: all 0.3s;
             border: 2px solid transparent;
         }
-
         .indicator.active {
             background: #667eea;
             transform: scale(1.3);
             border-color: white;
             box-shadow: 0 0 0 2px #667eea;
         }
-
         .indicator:hover {
             background: #a0aec0;
         }
-
-        /* Comentarios Disqus */
         .disqus-section {
             padding: 30px;
             background: white;
         }
-
         .disqus-section h2 {
             font-size: 1.8rem;
             color: #2d3748;
             margin-bottom: 20px;
             font-weight: 600;
         }
-
         #disqus_thread {
             min-height: 300px;
             background: white;
@@ -211,8 +184,6 @@
             padding: 20px;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
-
-        /* Mensajes de estado */
         .alert {
             padding: 15px 20px;
             border-radius: 10px;
@@ -220,20 +191,16 @@
             font-weight: 500;
             display: none;
         }
-
         .alert.success {
             background: #c6f6d5;
             color: #22543d;
             border: 1px solid #9ae6b4;
         }
-
         .alert.error {
             background: #fed7d7;
             color: #742a2a;
             border: 1px solid #fc8181;
         }
-
-        /* Responsive */
         @media (max-width: 768px) {
             .upload-header h1 { font-size: 2rem; }
             .carousel-inner { height: 300px; }
@@ -243,24 +210,22 @@
 </head>
 <body>
     <div class="container">
-        <!-- Cabecera con área de subida -->
         <div class="upload-header">
             <h1><i class="fas fa-laugh-squint"></i> PenaTotal 3.0</h1>
             <div class="upload-area" id="uploadArea">
                 <i class="fas fa-cloud-upload-alt"></i>
-                <p>Haz clic para subir tu meme</p>
-                <small>JPG, PNG o GIF • Usamos Cloudinary</small>
+                <p>Arrastra o haz clic para subir tu meme</p>
+                <small>JPG, PNG o GIF • Máx 5MB</small>
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
             </div>
         </div>
 
-        <!-- Mensajes de alerta -->
         <div id="alertMessage" class="alert"></div>
 
-        <!-- Carrusel de imágenes -->
         <div class="carousel-container">
             <div class="carousel" id="carousel">
                 <div class="carousel-inner" id="carouselInner">
-                    <!-- Las imágenes se cargarán dinámicamente desde localStorage -->
+                    <!-- Imágenes cargadas dinámicamente -->
                 </div>
                 <button class="carousel-control prev" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
                 <button class="carousel-control next" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
@@ -268,7 +233,6 @@
             <div class="carousel-indicators" id="indicators"></div>
         </div>
 
-        <!-- Sección de comentarios Disqus -->
         <div class="disqus-section">
             <h2><i class="fas fa-comments"></i> Comentarios</h2>
             <div id="disqus_thread"></div>
@@ -276,38 +240,54 @@
     </div>
 
     <script>
-        // --- CONFIGURACIÓN ---
-        const CLOUDINARY_CLOUD_NAME = 'dcxevwo3v'; // Reemplaza con tu cloud name
-        const CLOUDINARY_UPLOAD_PRESET = 'meme_preset';  // Reemplaza con tu upload preset sin firma
+        // ================= CONFIGURACIÓN =================
+        const CLOUD_NAME = 'dcxevwo3v';       // ⚠️ REEMPLAZA CON TU CLOUDINARY CLOUD NAME
+        const UPLOAD_PRESET = 'meme_preset'; // ⚠️ REEMPLAZA CON TU UPLOAD PRESET (unsigned)
+        const DISQUS_SHORTNAME = 'penatotal-1';   // Tu shortname de Disqus
 
-        // Disqus
-        var disqus_shortname = 'penatotal-1';
-        var disqus_identifier = 'default';
-        var disqus_url = window.location.href;
-
-        // Estado del carrusel
-        let images = JSON.parse(localStorage.getItem('memeImages')) || [];
+        // ================ ESTADO ================
+        let images = JSON.parse(localStorage.getItem('memes')) || [];
+        // Si no hay imágenes, agregar una de ejemplo
+        if (images.length === 0) {
+            images.push('https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg');
+        }
         let currentIndex = 0;
 
+        // ================ ELEMENTOS ================
         const carouselInner = document.getElementById('carouselInner');
         const indicators = document.getElementById('indicators');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
         const alertDiv = document.getElementById('alertMessage');
 
-        // Inicializar carrusel si hay imágenes
-        if (images.length > 0) {
-            renderCarousel();
-            updateDisqusForCurrent();
-        } else {
-            carouselInner.innerHTML = '<div style="color:white; text-align:center; padding:20px;">No hay memes aún. ¡Sube el primero!</div>';
-            loadDisqus('default', window.location.href);
-        }
+        // ================ DISQUS GLOBAL ================
+        // Identificador fijo para toda la galería
+        const DISQUS_IDENTIFIER = 'meme-gallery-global';
+        const DISQUS_URL = window.location.href.split('#')[0]; // URL sin hash
 
-        // Función para renderizar carrusel
+        // Cargar Disqus (solo una vez, con identificador fijo)
+        (function() {
+            var d = document, s = d.createElement('script');
+            s.src = 'https://' + DISQUS_SHORTNAME + '.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+
+        // Configuración de Disqus (se ejecuta antes de cargar el script)
+        window.disqus_config = function () {
+            this.page.identifier = DISQUS_IDENTIFIER;
+            this.page.url = DISQUS_URL;
+        };
+
+        // ================ FUNCIONES DEL CARRUSEL ================
         function renderCarousel() {
-            if (images.length === 0) return;
+            if (images.length === 0) {
+                carouselInner.innerHTML = '<div style="color:white; padding:20px;">No hay memes. ¡Sube uno!</div>';
+                indicators.innerHTML = '';
+                return;
+            }
             let itemsHtml = '';
             images.forEach((img, idx) => {
                 itemsHtml += `<div class="carousel-item ${idx === currentIndex ? 'active' : ''}">
@@ -316,14 +296,12 @@
             });
             carouselInner.innerHTML = itemsHtml;
 
-            // Indicadores
             let indicatorsHtml = '';
             images.forEach((_, idx) => {
                 indicatorsHtml += `<div class="indicator ${idx === currentIndex ? 'active' : ''}" data-index="${idx}"></div>`;
             });
             indicators.innerHTML = indicatorsHtml;
 
-            // Eventos a indicadores
             document.querySelectorAll('.indicator').forEach(ind => {
                 ind.addEventListener('click', () => {
                     const idx = parseInt(ind.dataset.index);
@@ -342,45 +320,6 @@
             document.querySelectorAll('.indicator').forEach((ind, idx) => {
                 ind.classList.toggle('active', idx === currentIndex);
             });
-            updateDisqusForCurrent();
-        }
-
-        // Función para cargar/reiniciar Disqus
-        function loadDisqus(identifier, url) {
-            if (window.DISQUS) {
-                window.DISQUS.reset({
-                    reload: true,
-                    config: function () {
-                        this.page.identifier = identifier;
-                        this.page.url = url;
-                    }
-                });
-            } else {
-                window.disqus_config = function () {
-                    this.page.identifier = identifier;
-                    this.page.url = url;
-                };
-                (function() {
-                    var d = document, s = d.createElement('script');
-                    s.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
-                    s.setAttribute('data-timestamp', +new Date());
-                    (d.head || d.body).appendChild(s);
-                })();
-            }
-        }
-
-        function updateDisqusForCurrent() {
-            if (images.length > 0) {
-                const imageUrl = images[currentIndex];
-                // Crear un identificador único basado en la URL de Cloudinary (ej. la parte del public_id)
-                // Extraemos el public_id de la URL de Cloudinary
-                const matches = imageUrl.match(/\/v\d+\/(.+)\./);
-                const publicId = matches ? matches[1] : imageUrl.split('/').pop();
-                const identifier = 'meme-' + publicId;
-                loadDisqus(identifier, window.location.href + '#' + identifier);
-            } else {
-                loadDisqus('default', window.location.href);
-            }
         }
 
         // Navegación
@@ -396,58 +335,81 @@
             updateCarousel();
         });
 
-        // Teclado
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') {
-                prevBtn.click();
-            } else if (e.key === 'ArrowRight') {
-                nextBtn.click();
-            }
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
         });
 
-        // Subida con Cloudinary
-        uploadArea.addEventListener('click', () => {
-            const widget = cloudinary.createUploadWidget(
-                {
-                    cloudName: CLOUDINARY_CLOUD_NAME,
-                    uploadPreset: CLOUDINARY_UPLOAD_PRESET,
-                    sources: ['local', 'url', 'camera'],
-                    multiple: false,
-                    maxFileSize: 5000000, // 5MB
-                    resourceType: 'image',
-                    clientAllowedFormats: ['jpg', 'jpeg', 'png', 'gif'],
-                },
-                (error, result) => {
-                    if (!error && result && result.event === 'success') {
-                        const imageUrl = result.info.secure_url;
-                        // Agregar al principio del array y guardar en localStorage
-                        images.unshift(imageUrl);
-                        localStorage.setItem('memeImages', JSON.stringify(images));
-                        currentIndex = 0;
-                        renderCarousel();
-                        updateDisqusForCurrent();
-                        showAlert('Meme subido con éxito', 'success');
-                    } else if (error) {
-                        showAlert('Error al subir: ' + error, 'error');
-                    }
-                }
-            );
-            widget.open();
+        // ================ SUBIDA A CLOUDINARY ================
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
         });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length) handleUpload(e.dataTransfer.files[0]);
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) handleUpload(fileInput.files[0]);
+        });
+
+        async function handleUpload(file) {
+            if (!file.type.match('image.*')) {
+                showAlert('Solo imágenes', 'error');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                showAlert('Máximo 5MB', 'error');
+                return;
+            }
+
+            showAlert('Subiendo...', 'success');
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', UPLOAD_PRESET);
+
+            try {
+                const res = await fetch(`https://api.cloudinary.com/v1_1/${dcxevwo3v}/image/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.secure_url) {
+                    images.unshift(data.secure_url);
+                    localStorage.setItem('memes', JSON.stringify(images));
+                    currentIndex = 0;
+                    renderCarousel();
+                    showAlert('Meme subido con éxito', 'success');
+                } else {
+                    showAlert('Error al subir', 'error');
+                }
+            } catch (err) {
+                showAlert('Error de red', 'error');
+                console.error(err);
+            }
+        }
 
         function showAlert(msg, type) {
             alertDiv.textContent = msg;
             alertDiv.className = `alert ${type}`;
             alertDiv.style.display = 'block';
-            setTimeout(() => {
-                alertDiv.style.display = 'none';
-            }, 3000);
+            setTimeout(() => alertDiv.style.display = 'none', 3000);
         }
 
-        // Opcional: botón para borrar todas las imágenes (por si quieres reiniciar)
-        // Puedes añadir un botón en el header que llame a:
-        // localStorage.removeItem('memeImages'); images = []; renderCarousel(); etc.
+        // Inicializar carrusel
+        renderCarousel();
     </script>
-    <noscript>Por favor, habilita JavaScript para ver los comentarios de <a href="https://disqus.com/?ref_noscript">Disqus</a>.</noscript>
+
+    <noscript>Habilita JavaScript para ver los comentarios de <a href="https://disqus.com/?ref_noscript">Disqus</a>.</noscript>
 </body>
 </html>
