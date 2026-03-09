@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PenaTotal 3.0</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Header con subida */
+        .upload-header {
+            background: white;
+            padding: 30px;
+            border-bottom: 1px solid #eef2f6;
+        }
+
+        .upload-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .upload-area {
+            border: 3px dashed #cbd5e0;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .upload-area i {
+            font-size: 48px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .upload-area p {
+            font-size: 1.1rem;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .upload-area small {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .upload-area.dragover {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        /* Carrusel */
+        .carousel-container {
+            padding: 30px;
+            background: #f7fafc;
+        }
+
+        .carousel {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .carousel-inner {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: #1a202c;
+        }
+
+        .carousel-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1a202c;
+        }
+
+        .carousel-item.active {
+            opacity: 1;
+        }
+
+        .carousel-item img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #4a5568;
+            transition: all 0.3s;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .carousel-control:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-control.prev {
+            left: 20px;
+        }
+
+        .carousel-control.next {
+            right: 20px;
+        }
+
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #cbd5e0;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .indicator.active {
+            background: #667eea;
+            transform: scale(1.3);
+            border-color: white;
+            box-shadow: 0 0 0 2px #667eea;
+        }
+
+        .indicator:hover {
+            background: #a0aec0;
+        }
+
+        /* Comentarios Disqus */
+        .disqus-section {
+            padding: 30px;
+            background: white;
+        }
+
+        .disqus-section h2 {
+            font-size: 1.8rem;
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        #disqus_thread {
+            min-height: 300px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        /* Mensajes de estado */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 30px 0;
+            font-weight: 500;
+            display: none;
+        }
+
+        .alert.success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .alert.error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .upload-header h1 { font-size: 2rem; }
+            .carousel-inner { height: 300px; }
+            .carousel-control { width: 40px; height: 40px; font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Cabecera con área de subida -->
+        <div class="upload-header">
+            <h1><i class="fas fa-laugh-squint"></i> PenaTotal 3.0</h1>
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Arrastra y suelta tu meme aquí o haz clic para seleccionar</p>
+                <small>JPG, PNG o GIF • Máx 5MB</small>
+                <input type="file" id="fileInput" accept="image/jpeg,image/png,image/gif" style="display: none;">
+            </div>
+        </div>
+
+        <!-- Mensajes de alerta -->
+        <div id="alertMessage" class="alert"></div>
+
+        <!-- Carrusel de imágenes -->
+        <div class="carousel-container">
+            <div class="carousel" id="carousel">
+                <div class="carousel-inner" id="carouselInner">
+                    <!-- Las imágenes se cargarán dinámicamente -->
+                </div>
+                <button class="carousel-control prev" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+                <button class="carousel-control next" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="carousel-indicators" id="indicators"></div>
+        </div>
+
+        <!-- Sección de comentarios Disqus -->
+        <div class="disqus-section">
+            <h2><i class="fas fa-comments"></i> Comentarios</h2>
+            <div id="disqus_thread"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de Disqus con shortname penatotal-1
+        var disqus_shortname = 'penatotal-1';
+        var disqus_identifier = 'default'; // Identificador por defecto
+        var disqus_url = window.location.href;
+
+        // Función para recargar Disqus con nuevo identificador
+        function loadDisqus(identifier, url) {
+            if (window.DISQUS) {
+                // Si Disqus ya está cargado, lo reiniciamos
+                window.DISQUS.reset({
+                    reload: true,
+                    config: function () {
+                        this.page.identifier = identifier;
+                        this.page.url = url;
+                    }
+                });
+            } else {
+                // Primera carga
+                window.disqus_config = function () {
+                    this.page.identifier = identifier;
+                    this.page.url = url;
+                };
+                (function() {
+                    var d = document, s = d.createElement('script');
+                    s.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+                    s.setAttribute('data-timestamp', +new Date());
+                    (d.head || d.body).appendChild(s);
+                })();
+            }
+        }
+
+        // Estado del carrusel
+        let images = [];
+        let currentIndex = 0;
+
+        const carouselInner = document.getElementById('carouselInner');
+        const indicators = document.getElementById('indicators');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const alertDiv = document.getElementById('alertMessage');
+
+        // Cargar imágenes al iniciar
+        fetch('/images')
+            .then(res => res.json())
+            .then(data => {
+                images = data;
+                if (images.length === 0) {
+                    carouselInner.innerHTML = '<div style="color:white; text-align:center; padding:20px;">No hay memes aún. ¡Sube el primero!</div>';
+                } else {
+                    renderCarousel();
+                    updateDisqusForCurrent();
+                }
+            })
+            .catch(err => console.error('Error cargando imágenes:', err));
+
+        // Renderizar carrusel
+        function renderCarousel() {
+            if (images.length === 0) return;
+            let itemsHtml = '';
+            images.forEach((img, idx) => {
+                itemsHtml += `<div class="carousel-item ${idx === currentIndex ? 'active' : ''}">
+                    <img src="${img}" alt="Meme ${idx+1}">
+                </div>`;
+            });
+            carouselInner.innerHTML = itemsHtml;
+
+            // Indicadores
+            let indicatorsHtml = '';
+            images.forEach((_, idx) => {
+                indicatorsHtml += `<div class="indicator ${idx === currentIndex ? 'active' : ''}" data-index="${idx}"></div>`;
+            });
+            indicators.innerHTML = indicatorsHtml;
+
+            // Eventos a indicadores
+            document.querySelectorAll('.indicator').forEach(ind => {
+                ind.addEventListener('click', () => {
+                    const idx = parseInt(ind.dataset.index);
+                    if (idx !== currentIndex) {
+                        currentIndex = idx;
+                        updateCarousel();
+                    }
+                });
+            });
+        }
+
+        function updateCarousel() {
+            document.querySelectorAll('.carousel-item').forEach((item, idx) => {
+                item.classList.toggle('active', idx === currentIndex);
+            });
+            document.querySelectorAll('.indicator').forEach((ind, idx) => {
+                ind.classList.toggle('active', idx === currentIndex);
+            });
+            updateDisqusForCurrent();
+        }
+
+        function updateDisqusForCurrent() {
+            if (images.length > 0) {
+                const imageUrl = images[currentIndex];
+                const identifier = 'meme-' + imageUrl.split('/').pop(); // nombre del archivo
+                const fullUrl = window.location.origin + imageUrl;
+                loadDisqus(identifier, fullUrl);
+            } else {
+                loadDisqus('default', window.location.href);
+            }
+        }
+
+        // Navegación
+        prevBtn.addEventListener('click', () => {
+            if (images.length === 0) return;
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            updateCarousel();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (images.length === 0) return;
+            currentIndex = (currentIndex + 1) % images.length;
+            updateCarousel();
+        });
+
+        // Teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                prevBtn.click();
+            } else if (e.key === 'ArrowRight') {
+                nextBtn.click();
+            }
+        });
+
+        // Subida de archivos
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length) handleUpload(files[0]);
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) handleUpload(fileInput.files[0]);
+        });
+
+        function handleUpload(file) {
+            if (!file.type.match('image.*')) {
+                showAlert('Solo se permiten imágenes', 'error');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                showAlert('La imagen no debe superar los 5MB', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('meme', file);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Meme subido con éxito', 'success');
+                    // Agregar la nueva imagen al principio
+                    images.unshift(data.imageUrl);
+                    currentIndex = 0;
+                    renderCarousel();
+                    updateDisqusForCurrent();
+                } else {
+                    showAlert('Error al subir', 'error');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showAlert('Error de conexión', 'error');
+            });
+        }
+
+        function showAlert(msg, type) {
+            alertDiv.textContent = msg;
+            alertDiv.className = `alert ${type}`;
+            alertDiv.style.display = 'block';
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+
+    <!-- Carga inicial de Disqus con identificador por defecto (se reemplazará al cargar imágenes) -->
+    <script>
+        // Inicializar Disqus por si no hay imágenes
+        if (images.length === 0) {
+            loadDisqus('default', window.location.href);
+        }
+    </script>
+    <noscript>Por favor, habilita JavaScript para ver los comentarios de <a href="https://disqus.com/?ref_noscript">Disqus</a>.</noscript>
+</body>
+</html>
