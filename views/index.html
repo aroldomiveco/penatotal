@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Cloudinary Widget -->
+    <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
     <style>
         * {
             margin: 0;
@@ -79,11 +81,6 @@
         .upload-area small {
             color: #718096;
             font-size: 0.9rem;
-        }
-
-        .upload-area.dragover {
-            border-color: #48bb78;
-            background: #f0fff4;
         }
 
         /* Carrusel */
@@ -251,9 +248,8 @@
             <h1><i class="fas fa-laugh-squint"></i> PenaTotal 3.0</h1>
             <div class="upload-area" id="uploadArea">
                 <i class="fas fa-cloud-upload-alt"></i>
-                <p>Arrastra y suelta tu meme aquí o haz clic para seleccionar</p>
-                <small>JPG, PNG o GIF • Máx 5MB</small>
-                <input type="file" id="fileInput" accept="image/jpeg,image/png,image/gif" style="display: none;">
+                <p>Haz clic para subir tu meme</p>
+                <small>JPG, PNG o GIF • Usamos Cloudinary</small>
             </div>
         </div>
 
@@ -264,7 +260,7 @@
         <div class="carousel-container">
             <div class="carousel" id="carousel">
                 <div class="carousel-inner" id="carouselInner">
-                    <!-- Las imágenes se cargarán dinámicamente -->
+                    <!-- Las imágenes se cargarán dinámicamente desde localStorage -->
                 </div>
                 <button class="carousel-control prev" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
                 <button class="carousel-control next" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
@@ -280,39 +276,17 @@
     </div>
 
     <script>
-        // Configuración de Disqus con shortname penatotal-1
+        // --- CONFIGURACIÓN ---
+        const CLOUDINARY_CLOUD_NAME = 'TU_CLOUD_NAME'; // Reemplaza con tu cloud name
+        const CLOUDINARY_UPLOAD_PRESET = 'TU_UPLOAD_PRESET'; // Reemplaza con tu upload preset sin firma
+
+        // Disqus
         var disqus_shortname = 'penatotal-1';
-        var disqus_identifier = 'default'; // Identificador por defecto
+        var disqus_identifier = 'default';
         var disqus_url = window.location.href;
 
-        // Función para recargar Disqus con nuevo identificador
-        function loadDisqus(identifier, url) {
-            if (window.DISQUS) {
-                // Si Disqus ya está cargado, lo reiniciamos
-                window.DISQUS.reset({
-                    reload: true,
-                    config: function () {
-                        this.page.identifier = identifier;
-                        this.page.url = url;
-                    }
-                });
-            } else {
-                // Primera carga
-                window.disqus_config = function () {
-                    this.page.identifier = identifier;
-                    this.page.url = url;
-                };
-                (function() {
-                    var d = document, s = d.createElement('script');
-                    s.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
-                    s.setAttribute('data-timestamp', +new Date());
-                    (d.head || d.body).appendChild(s);
-                })();
-            }
-        }
-
         // Estado del carrusel
-        let images = [];
+        let images = JSON.parse(localStorage.getItem('memeImages')) || [];
         let currentIndex = 0;
 
         const carouselInner = document.getElementById('carouselInner');
@@ -320,24 +294,18 @@
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
         const alertDiv = document.getElementById('alertMessage');
 
-        // Cargar imágenes al iniciar
-        fetch('/images')
-            .then(res => res.json())
-            .then(data => {
-                images = data;
-                if (images.length === 0) {
-                    carouselInner.innerHTML = '<div style="color:white; text-align:center; padding:20px;">No hay memes aún. ¡Sube el primero!</div>';
-                } else {
-                    renderCarousel();
-                    updateDisqusForCurrent();
-                }
-            })
-            .catch(err => console.error('Error cargando imágenes:', err));
+        // Inicializar carrusel si hay imágenes
+        if (images.length > 0) {
+            renderCarousel();
+            updateDisqusForCurrent();
+        } else {
+            carouselInner.innerHTML = '<div style="color:white; text-align:center; padding:20px;">No hay memes aún. ¡Sube el primero!</div>';
+            loadDisqus('default', window.location.href);
+        }
 
-        // Renderizar carrusel
+        // Función para renderizar carrusel
         function renderCarousel() {
             if (images.length === 0) return;
             let itemsHtml = '';
@@ -377,12 +345,39 @@
             updateDisqusForCurrent();
         }
 
+        // Función para cargar/reiniciar Disqus
+        function loadDisqus(identifier, url) {
+            if (window.DISQUS) {
+                window.DISQUS.reset({
+                    reload: true,
+                    config: function () {
+                        this.page.identifier = identifier;
+                        this.page.url = url;
+                    }
+                });
+            } else {
+                window.disqus_config = function () {
+                    this.page.identifier = identifier;
+                    this.page.url = url;
+                };
+                (function() {
+                    var d = document, s = d.createElement('script');
+                    s.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+                    s.setAttribute('data-timestamp', +new Date());
+                    (d.head || d.body).appendChild(s);
+                })();
+            }
+        }
+
         function updateDisqusForCurrent() {
             if (images.length > 0) {
                 const imageUrl = images[currentIndex];
-                const identifier = 'meme-' + imageUrl.split('/').pop(); // nombre del archivo
-                const fullUrl = window.location.origin + imageUrl;
-                loadDisqus(identifier, fullUrl);
+                // Crear un identificador único basado en la URL de Cloudinary (ej. la parte del public_id)
+                // Extraemos el public_id de la URL de Cloudinary
+                const matches = imageUrl.match(/\/v\d+\/(.+)\./);
+                const publicId = matches ? matches[1] : imageUrl.split('/').pop();
+                const identifier = 'meme-' + publicId;
+                loadDisqus(identifier, window.location.href + '#' + identifier);
             } else {
                 loadDisqus('default', window.location.href);
             }
@@ -410,64 +405,35 @@
             }
         });
 
-        // Subida de archivos
-        uploadArea.addEventListener('click', () => fileInput.click());
-
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
-
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
-
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length) handleUpload(files[0]);
-        });
-
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files.length) handleUpload(fileInput.files[0]);
-        });
-
-        function handleUpload(file) {
-            if (!file.type.match('image.*')) {
-                showAlert('Solo se permiten imágenes', 'error');
-                return;
-            }
-            if (file.size > 5 * 1024 * 1024) {
-                showAlert('La imagen no debe superar los 5MB', 'error');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('meme', file);
-
-            fetch('/upload', {
-                method: 'POST',
-                body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    showAlert('Meme subido con éxito', 'success');
-                    // Agregar la nueva imagen al principio
-                    images.unshift(data.imageUrl);
-                    currentIndex = 0;
-                    renderCarousel();
-                    updateDisqusForCurrent();
-                } else {
-                    showAlert('Error al subir', 'error');
+        // Subida con Cloudinary
+        uploadArea.addEventListener('click', () => {
+            const widget = cloudinary.createUploadWidget(
+                {
+                    cloudName: CLOUDINARY_CLOUD_NAME,
+                    uploadPreset: CLOUDINARY_UPLOAD_PRESET,
+                    sources: ['local', 'url', 'camera'],
+                    multiple: false,
+                    maxFileSize: 5000000, // 5MB
+                    resourceType: 'image',
+                    clientAllowedFormats: ['jpg', 'jpeg', 'png', 'gif'],
+                },
+                (error, result) => {
+                    if (!error && result && result.event === 'success') {
+                        const imageUrl = result.info.secure_url;
+                        // Agregar al principio del array y guardar en localStorage
+                        images.unshift(imageUrl);
+                        localStorage.setItem('memeImages', JSON.stringify(images));
+                        currentIndex = 0;
+                        renderCarousel();
+                        updateDisqusForCurrent();
+                        showAlert('Meme subido con éxito', 'success');
+                    } else if (error) {
+                        showAlert('Error al subir: ' + error, 'error');
+                    }
                 }
-            })
-            .catch(err => {
-                console.error(err);
-                showAlert('Error de conexión', 'error');
-            });
-        }
+            );
+            widget.open();
+        });
 
         function showAlert(msg, type) {
             alertDiv.textContent = msg;
@@ -477,14 +443,10 @@
                 alertDiv.style.display = 'none';
             }, 3000);
         }
-    </script>
 
-    <!-- Carga inicial de Disqus con identificador por defecto (se reemplazará al cargar imágenes) -->
-    <script>
-        // Inicializar Disqus por si no hay imágenes
-        if (images.length === 0) {
-            loadDisqus('default', window.location.href);
-        }
+        // Opcional: botón para borrar todas las imágenes (por si quieres reiniciar)
+        // Puedes añadir un botón en el header que llame a:
+        // localStorage.removeItem('memeImages'); images = []; renderCarousel(); etc.
     </script>
     <noscript>Por favor, habilita JavaScript para ver los comentarios de <a href="https://disqus.com/?ref_noscript">Disqus</a>.</noscript>
 </body>
