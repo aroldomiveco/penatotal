@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PenaTotal 3.0 - Lacréate , Humillate y Diviertete</title>
+    <title>PenaTotal 3.0 - Lacréate, Humillate y Diviertete</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts -->
@@ -14,12 +14,30 @@
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            position: relative;
+            margin: 0;
         }
+
+        /* Fondo GIF con superposición */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('/public/fondo.gif') no-repeat center center fixed;
+            background-size: cover;
+            opacity: 0.25; /* Ajusta la transparencia aquí (0 = invisible, 1 = sólido) */
+            z-index: -1;
+            pointer-events: none; /* Para que no interfiera con clics */
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -29,11 +47,13 @@
             overflow: hidden;
             backdrop-filter: blur(10px);
         }
+
         .upload-header {
             background: white;
             padding: 30px;
             border-bottom: 1px solid #eef2f6;
         }
+
         .upload-header h1 {
             font-size: 2.5rem;
             font-weight: 700;
@@ -43,6 +63,7 @@
             margin-bottom: 20px;
             text-align: center;
         }
+
         .upload-area {
             border: 3px dashed #cbd5e0;
             border-radius: 16px;
@@ -52,32 +73,39 @@
             transition: all 0.3s ease;
             background: #f8fafc;
         }
+
         .upload-area:hover {
             border-color: #667eea;
             background: #f0f4ff;
         }
+
         .upload-area i {
             font-size: 48px;
             color: #667eea;
             margin-bottom: 15px;
         }
+
         .upload-area p {
             font-size: 1.1rem;
             color: #4a5568;
             margin-bottom: 10px;
         }
+
         .upload-area small {
             color: #718096;
             font-size: 0.9rem;
         }
+
         .upload-area.dragover {
             border-color: #48bb78;
             background: #f0fff4;
         }
+
         .carousel-container {
             padding: 30px;
             background: #f7fafc;
         }
+
         .carousel {
             position: relative;
             max-width: 800px;
@@ -86,12 +114,14 @@
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
+
         .carousel-inner {
             position: relative;
             width: 100%;
             height: 400px;
             background: #1a202c;
         }
+
         .carousel-item {
             position: absolute;
             top: 0;
@@ -105,14 +135,17 @@
             justify-content: center;
             background: #1a202c;
         }
+
         .carousel-item.active {
             opacity: 1;
         }
+
         .carousel-item img {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
         }
+
         .carousel-control {
             position: absolute;
             top: 50%;
@@ -132,23 +165,28 @@
             z-index: 10;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
+
         .carousel-control:hover {
             background: white;
             color: #667eea;
             transform: translateY(-50%) scale(1.1);
         }
+
         .carousel-control.prev {
             left: 20px;
         }
+
         .carousel-control.next {
             right: 20px;
         }
+
         .carousel-indicators {
             display: flex;
             justify-content: center;
             gap: 12px;
             margin-top: 15px;
         }
+
         .indicator {
             width: 12px;
             height: 12px;
@@ -158,25 +196,30 @@
             transition: all 0.3s;
             border: 2px solid transparent;
         }
+
         .indicator.active {
             background: #667eea;
             transform: scale(1.3);
             border-color: white;
             box-shadow: 0 0 0 2px #667eea;
         }
+
         .indicator:hover {
             background: #a0aec0;
         }
+
         .disqus-section {
             padding: 30px;
             background: white;
         }
+
         .disqus-section h2 {
             font-size: 1.8rem;
             color: #2d3748;
             margin-bottom: 20px;
             font-weight: 600;
         }
+
         #disqus_thread {
             min-height: 300px;
             background: white;
@@ -184,6 +227,7 @@
             padding: 20px;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
+
         .alert {
             padding: 15px 20px;
             border-radius: 10px;
@@ -191,16 +235,19 @@
             font-weight: 500;
             display: none;
         }
+
         .alert.success {
             background: #c6f6d5;
             color: #22543d;
             border: 1px solid #9ae6b4;
         }
+
         .alert.error {
             background: #fed7d7;
             color: #742a2a;
             border: 1px solid #fc8181;
         }
+
         @media (max-width: 768px) {
             .upload-header h1 { font-size: 2rem; }
             .carousel-inner { height: 300px; }
@@ -241,9 +288,9 @@
 
     <script>
         // ================= CONFIGURACIÓN =================
-        const CLOUD_NAME = 'dcxevwo3v';       // ⚠️ REEMPLAZA CON TU CLOUDINARY CLOUD NAME
-        const UPLOAD_PRESET = 'meme_preset'; // ⚠️ REEMPLAZA CON TU UPLOAD PRESET (unsigned)
-        const DISQUS_SHORTNAME = 'penatotal-1';   // Tu shortname de Disqus
+        const CLOUD_NAME = 'dcxevwo3v';       // Tu cloud name de Cloudinary
+        const UPLOAD_PRESET = 'meme_preset';  // Tu upload preset (unsigned)
+        const DISQUS_SHORTNAME = 'penatotal-1'; // Shortname de Disqus
 
         // ================ ESTADO ================
         let images = JSON.parse(localStorage.getItem('memes')) || [];
