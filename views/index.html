@@ -19,9 +19,9 @@
             min-height: 100vh;
             padding: 20px;
             position: relative;
-            background-color: #1a1a2e; /* Color de respaldo */
+            background-color: #1a1a2e; /* Color de respaldo mientras carga el GIF */
         }
-        /* Fondo GIF con superposición oscura */
+        /* Fondo GIF animado, sin superposición oscura */
         body::before {
             content: "";
             position: fixed;
@@ -31,30 +31,16 @@
             height: 100%;
             background: url('/public/fondo.gif') no-repeat center center fixed;
             background-size: cover;
-            opacity: 0.25; /* Ajusta la transparencia del GIF (0 = invisible, 1 = sólido) */
-            z-index: -1;
-            pointer-events: none;
-        }
-        /* Capa de color adicional para mejorar legibilidad (opcional) */
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.3); /* Oscurece ligeramente el fondo */
-            z-index: -1;
-            pointer-events: none;
+            z-index: -2; /* Detrás de todo */
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.92); /* Un poco más transparente para ver el fondo */
+            background: rgba(255, 255, 255, 0.85); /* Fondo semi-transparente para que se vea el GIF */
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(5px);
             border: 1px solid rgba(255,255,255,0.3);
         }
         .upload-header {
@@ -280,6 +266,7 @@
             images.push('https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg');
         }
         let currentIndex = 0;
+        let autoplayInterval = null;
 
         // ================ ELEMENTOS ================
         const carouselInner = document.getElementById('carouselInner');
@@ -291,11 +278,9 @@
         const alertDiv = document.getElementById('alertMessage');
 
         // ================ DISQUS GLOBAL ================
-        // Identificador fijo para toda la galería
         const DISQUS_IDENTIFIER = 'meme-gallery-global';
-        const DISQUS_URL = window.location.href.split('#')[0]; // URL sin hash
+        const DISQUS_URL = window.location.href.split('#')[0];
 
-        // Cargar Disqus (solo una vez, con identificador fijo)
         (function() {
             var d = document, s = d.createElement('script');
             s.src = 'https://' + DISQUS_SHORTNAME + '.disqus.com/embed.js';
@@ -303,7 +288,6 @@
             (d.head || d.body).appendChild(s);
         })();
 
-        // Configuración de Disqus (se ejecuta antes de cargar el script)
         window.disqus_config = function () {
             this.page.identifier = DISQUS_IDENTIFIER;
             this.page.url = DISQUS_URL;
@@ -336,6 +320,7 @@
                     if (idx !== currentIndex) {
                         currentIndex = idx;
                         updateCarousel();
+                        resetAutoplay(); // Reiniciar autoplay al hacer clic manual
                     }
                 });
             });
@@ -350,22 +335,58 @@
             });
         }
 
-        // Navegación
+        // Navegación manual
         prevBtn.addEventListener('click', () => {
             if (images.length === 0) return;
             currentIndex = (currentIndex - 1 + images.length) % images.length;
             updateCarousel();
+            resetAutoplay();
         });
 
         nextBtn.addEventListener('click', () => {
             if (images.length === 0) return;
             currentIndex = (currentIndex + 1) % images.length;
             updateCarousel();
+            resetAutoplay();
         });
 
+        // Teclado
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') prevBtn.click();
-            if (e.key === 'ArrowRight') nextBtn.click();
+            if (e.key === 'ArrowLeft') {
+                prevBtn.click();
+            } else if (e.key === 'ArrowRight') {
+                nextBtn.click();
+            }
+        });
+
+        // ================ AUTOPLAY ================
+        function startAutoplay() {
+            if (autoplayInterval) clearInterval(autoplayInterval);
+            autoplayInterval = setInterval(() => {
+                if (images.length > 0) {
+                    currentIndex = (currentIndex + 1) % images.length;
+                    updateCarousel();
+                }
+            }, 5000); // Cambia cada 5 segundos
+        }
+
+        function resetAutoplay() {
+            if (autoplayInterval) {
+                clearInterval(autoplayInterval);
+                startAutoplay();
+            }
+        }
+
+        // Iniciar autoplay después de cargar
+        startAutoplay();
+
+        // Pausar autoplay cuando el mouse está sobre el carrusel (opcional)
+        const carousel = document.getElementById('carousel');
+        carousel.addEventListener('mouseenter', () => {
+            if (autoplayInterval) clearInterval(autoplayInterval);
+        });
+        carousel.addEventListener('mouseleave', () => {
+            startAutoplay();
         });
 
         // ================ SUBIDA A CLOUDINARY ================
@@ -418,8 +439,9 @@
                     currentIndex = 0;
                     renderCarousel();
                     showAlert('Meme subido con éxito', 'success');
+                    resetAutoplay(); // Reiniciar autoplay después de subir
                 } else {
-                    showAlert('Error al subir', 'error');
+                    showAlert('Error al subir: ' + (data.error?.message || 'desconocido'), 'error');
                 }
             } catch (err) {
                 showAlert('Error de red', 'error');
