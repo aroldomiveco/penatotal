@@ -9,6 +9,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* ... mismos estilos que antes ... */
         * {
             margin: 0;
             padding: 0;
@@ -19,9 +20,8 @@
             min-height: 100vh;
             padding: 20px;
             position: relative;
-            background-color: #1a1a2e; /* Color de respaldo mientras carga el GIF */
+            background-color: #1a1a2e;
         }
-        /* Fondo GIF animado, sin superposición oscura */
         body::before {
             content: "";
             position: fixed;
@@ -31,12 +31,12 @@
             height: 100%;
             background: url('/fondo.gif') no-repeat center center fixed;
             background-size: cover;
-            z-index: -2; /* Detrás de todo */
+            z-index: -2;
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.85); /* Fondo semi-transparente para que se vea el GIF */
+            background: rgba(255, 255, 255, 0.85);
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
@@ -260,11 +260,8 @@
         const DISQUS_SHORTNAME = 'penatotal-1';   // Tu shortname de Disqus
 
         // ================ ESTADO ================
+        // Cargar imágenes desde localStorage (inicia vacío si no hay)
         let images = JSON.parse(localStorage.getItem('memes')) || [];
-        // Si no hay imágenes, agregar una de ejemplo
-        if (images.length === 0) {
-            images.push('https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg');
-        }
         let currentIndex = 0;
         let autoplayInterval = null;
 
@@ -296,7 +293,7 @@
         // ================ FUNCIONES DEL CARRUSEL ================
         function renderCarousel() {
             if (images.length === 0) {
-                carouselInner.innerHTML = '<div style="color:white; padding:20px;">No hay memes. ¡Sube uno!</div>';
+                carouselInner.innerHTML = '<div style="color:white; padding:20px; text-align:center;">No hay memes. ¡Sube el primero!</div>';
                 indicators.innerHTML = '';
                 return;
             }
@@ -320,7 +317,7 @@
                     if (idx !== currentIndex) {
                         currentIndex = idx;
                         updateCarousel();
-                        resetAutoplay(); // Reiniciar autoplay al hacer clic manual
+                        resetAutoplay();
                     }
                 });
             });
@@ -436,10 +433,10 @@
                 if (data.secure_url) {
                     images.unshift(data.secure_url);
                     localStorage.setItem('memes', JSON.stringify(images));
-                    currentIndex = 0;
+                    currentIndex = 0; // Mostrar la nueva imagen primero
                     renderCarousel();
                     showAlert('Meme subido con éxito', 'success');
-                    resetAutoplay(); // Reiniciar autoplay después de subir
+                    resetAutoplay();
                 } else {
                     showAlert('Error al subir: ' + (data.error?.message || 'desconocido'), 'error');
                 }
